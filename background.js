@@ -4,13 +4,13 @@ chrome.alarms.create( "fruitTimer", {
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "fruitTimer") {
-    chrome.storage.local.get(["timer", "isRunning"], (res) => {
+    chrome.storage.local.get(["timer", "isRunning", "timeOption"], (res) => {
       if (res.isRunning) {
         let timer = res.timer + 1
         let isRunning = true
-        if (timer === 60 * 25) {
+        if (timer === 60 * res.timeOption) {
           this.ServiceWorkerRegistration.showNotification("Fruit Timer", {
-            body: "25 minuten zijn verstreken",
+            body: `${res.timeOption}minuten zijn verstreken`,
             icon: "icon.png",
           })
           timer = 0
@@ -26,9 +26,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 })
 
-chrome.storage.local.get(["timer", "isRunning"], (res) => {
+chrome.storage.local.get(["timer", "isRunning", "timeOption"], (res) => {
   chrome.storage.local.set({
     timer: "timer" in res ? res.timer : 0,
+    timeOption: "timeOption" in res ? res.timeOption : 25,
     isRunning: "isRunning" in res ? res.isRunning : false,
   })
 })

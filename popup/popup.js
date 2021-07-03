@@ -2,13 +2,11 @@ let tasks = []
 
 
 function updateTime() {
-  chrome.storage.local.get(["timer"], (res) => {
-
+  chrome.storage.local.get(["timer", "timeOption"], (res) => {
     const time = document.getElementById("time")
-    const minutes = `${25 - Math.ceil(res.timer / 60)}`.padStart(2, "0")
+    const minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
     let seconds = "00"
     if (res.timer % 60 != 0) {
-
       seconds = `${60 - res.timer % 60}`.padStart(2, "0")
     }
     time.textContent = `${minutes}:${seconds}`
@@ -18,7 +16,7 @@ function updateTime() {
 updateTime()
 setInterval(updateTime, 1000)
 
-const startTimerBtn = document.getElementById("start_timer-btn")
+const startTimerBtn = document.getElementById("start-timer-btn")
 startTimerBtn.addEventListener("click", () => {
 
   chrome.storage.local.get(["isRunning"], (res) => {
@@ -63,13 +61,15 @@ function renderTask(taskNum) {
   text.type = "text"
   text.placeholder = "Schrijf jouw opdracht..."
   text.value = tasks[taskNum]
+  text.className = "task-input"
   text.addEventListener("change", () => {
-    tasks[tasksNum] = text.value
+    tasks[taskNum] = text.value
     saveTasks()
   })
   const deleteBtn = document.createElement("input")
   deleteBtn.type = "button"
   deleteBtn.value = "X"
+  text.className = "task-delete"
   deleteBtn.addEventListener("click", () => {
     deleteTask(taskNum)
   })
@@ -81,7 +81,7 @@ function renderTask(taskNum) {
 }
 
 function addTask() {
-  const tasksNum = tasks.length
+  const taskNum = tasks.length
   tasks.push("")
   renderTask(taskNum)
   saveTasks()

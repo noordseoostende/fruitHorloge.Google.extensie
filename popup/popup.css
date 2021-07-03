@@ -1,6 +1,7 @@
 body {
   height: 400px;
-  width: 300px;
+  width: 350px;
+  background-image: linear-gradient(to right bottom, #55b751, #71c14a, #8dca43, #a9d23c, #c6da36, #dad431, #ecce32, #fdc738, #ffb344, #ffa051, #fb8f5e, #f0816a);
 }
 
 .header {
