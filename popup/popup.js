@@ -1,32 +1,62 @@
-const tasks = []
+let tasks = []
 
 const addTaskBtn = document.getElementById("add-task-btn")
-addTaskBtn.addEventListener("click", () => addTaskBtn())
+addTaskBtn.addEventListener("click", () => addTask())
 
-function addTask() {
-  const tasksNum = tasks.length
-  tasks.push("")
+chrome.storage.sync.get([tasks], (res) => {
+  tasks = res.tasks ? res.tasks : []
+  renderTasks()
+})
+
+function saveTasks() {
+  chrome.storage.sync.set({
+    tasks,
+  })
+}
+
+function renderTask(taskNum) {
+  
   const taskRow = document.createElement("div")
 
   const text = document.createElement("input")
   text.type = "text"
   text.placeholder = "Schrijf jouw opdracht..."
+  text.value = tasks[taskNum]
   text.addEventListener("change", () => {
     tasks[tasksNum] = text.value
-    console.log(tasks)
+    saveTasks()
   })
-
   const deleteBtn = document.createElement("input")
   deleteBtn.type = "button"
   deleteBtn.value = "X"
   deleteBtn.addEventListener("click", () => {
-    tasks.splice(taskNum, 1)
+    deleteTask(taskNum)
   })
-
-
   taskRow.appendChild(text)
   taskRow.appendChild(deleteBtn)
 
   const taskContainer = document.getElementById("task-container")
   taskContainer.appendChild(taskRow)
+}
+
+function addTask() {
+  const tasksNum = tasks.length
+  tasks.push("")
+  renderTask(taskNum)
+  saveTasks()
+
+}
+
+function deleteTask(taskNum) {
+  tasks.splice(taskNum, 1)
+  renderTasks()
+  saveTasks()
+}
+
+function renderTasks() {
+  const taskContainer = document.getElementById("task-container")
+  taskContainer.textContent = ""
+  tasks.forEach((taskText, taskNum) => {
+    renderTask(taskNum)
+  })
 }
